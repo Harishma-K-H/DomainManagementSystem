@@ -1,14 +1,18 @@
-// src/server.ts
+import express from 'express';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import domainRoutes from './routes/domains';
+
 dotenv.config();
-
-import app from './app'; 
-import connectDB from './config/db'; 
-
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-  });
+mongoose.connect(process.env.MONGO_URI as string)
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB error:', err));
+
+app.use('/api/domains', domainRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
